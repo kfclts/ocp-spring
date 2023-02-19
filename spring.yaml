@@ -1,0 +1,118 @@
+apiVersion: v1
+items:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: springrest
+      app.kubernetes.io/component: springrest
+      app.kubernetes.io/instance: springrest
+    name: springrest
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: quay.io/rhn_support_kchang/spring_rest:v2_x86
+      from:
+        kind: DockerImage
+        name: quay.io/rhn_support_kchang/spring_rest:v2_x86
+      generation: null
+      importPolicy: {}
+      name: v2_x86
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"springrest:v2_x86"},"fieldPath":"spec.template.spec.containers[?(@.name==\"springrest\")].image"}]'
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: springrest
+      app.kubernetes.io/component: springrest
+      app.kubernetes.io/instance: springrest
+    name: springrest
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        deployment: springrest
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deployment: springrest
+      spec:
+        containers:
+        - image: ' '
+          name: springrest
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8778
+            protocol: TCP
+          resources: {}
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: springrest
+      app.kubernetes.io/component: springrest
+      app.kubernetes.io/instance: springrest
+    name: springrest
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deployment: springrest
+  status:
+    loadBalancer: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: springrest
+      app.kubernetes.io/component: springrest
+      app.kubernetes.io/instance: springrest
+    name: springrest
+  spec:
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: ""
+      name: springrest
+      weight: null
+  status: { }
+
+kind: List
+metadata: {}
+
+
